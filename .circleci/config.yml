@@ -16,16 +16,20 @@ jobs:
     
     configure_infrastructure: 
       docker:
-        - image: python:3.9-alpine3.15
+        - image: kserge2001/centos_ssh
       steps:
         - checkout
         - add_ssh_keys:
                 
                 fingerprints: ["36:e0:2c:e0:10:7d:33:dc:06:0f:51:d1:cc:41:1d:79"] 
         - run:
-            name: Install Ansible
+            name: Install Epel 
             command: |
-              apk add --update ansible
+              sudo yum -y install epel-release 
+        - run :
+             name: Install Ansible
+             command: |
+              sudo yum -y update && sudo yum -y install ansible
         - run:
             name: Run Playbook and Configure server
             command: |
