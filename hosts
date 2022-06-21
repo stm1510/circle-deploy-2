@@ -42,6 +42,7 @@ ansible_ssh_pass = school1
 #ec2-44-201-204-74.compute-1.amazonaws.com
 
 #ec2-3-89-90-92.compute-1.amazonaws.com
+ec2-44-192-60-214.compute-1.amazonaws.com
 
 ec2-44-203-204-125.compute-1.amazonaws.com
 ec2-54-167-192-73.compute-1.amazonaws.com
