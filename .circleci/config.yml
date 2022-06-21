@@ -33,7 +33,7 @@ jobs:
         - run:
             name: Run Playbook and Configure server
             command: |
-              ansible-playbook -i hosts main1.yml --private-key udacity-ansible.pem
+              ansible-playbook -i hosts dbservers main1.yml --private-key udacity-ansible.pem
             
 
 workflows:
