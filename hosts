@@ -39,7 +39,9 @@ ansible_ssh_pass = school1
 # Ex 3: A collection of database servers in the 'dbservers' group
 
  [dbservers]
-ec2-3-86-208-112.compute-1.amazonaws.com
+ec2-44-201-204-74.compute-1.amazonaws.com
+
+ec2-3-89-90-92.compute-1.amazonaws.com
 
  [dbservers:vars]
 ansible_user = ubuntu
