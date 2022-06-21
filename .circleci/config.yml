@@ -25,11 +25,11 @@ jobs:
         - run:
             name: Install Epel 
             command: |
-               yum -y install epel-release 
+               sudo amazon-linux-extras install ansible2 -y
         - run :
-             name: Install Ansible
+             name: Install Update
              command: |
-               yum -y update &&  yum -y install ansible
+               yum -y update 
         - run:
             name: Run Playbook and Configure server
             command: |
