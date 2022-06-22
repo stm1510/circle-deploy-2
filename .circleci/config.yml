@@ -35,8 +35,8 @@ jobs:
             command: |
               #ansible-playbook -i hosts  main1.yml --private-key udacity-ansible.pem
               ansible-playbook -i hosts main1.yml --syntax-check
-              ansible -i hosts dbservers -m ping 
-              ansible -i hosts dbservers -a "useradd tawfiq -m -d /home" 
+              ansible -i hosts dbservers -m ping --private-key udacity-ansible.pem
+              ansible -i hosts dbservers -a "sudo useradd tawfiq -m -d /home" --private-key udacity-ansible.pem
             
 
 workflows:
