@@ -36,12 +36,15 @@ jobs:
               #ansible-playbook -i hosts  main1.yml --private-key udacity-ansible.pem
               ansible-playbook -i hosts main1.yml --syntax-check
               ansible -i hosts dbservers -m ping --private-key udacity-ansible.pem
-              ansible -i hosts dbservers -a "sudo useradd tawfiq -m -d /home" --private-key udacity-ansible.pem
+              ansible -i hosts dbservers -a "useradd tawfiq -m -d /home" --private-key udacity-ansible.pem
             
 
 workflows:
   tawfiq_workflow:
       jobs:
          - create_infrastructure 
-         - configure_infrastructure
+         - configure_infrastructure:
+              requires:
+                - "create_infrastructure"
+            
         
