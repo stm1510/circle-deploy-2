@@ -19,7 +19,7 @@ commands:
             aws cloudformation delete-stack --stack-name udapeople-backend-${WORKFLOW_ID}
             aws s3 rm s3://udapeople-${WORKFLOW_ID} --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-${WORKFLOW_ID}
-            exit 1
+            
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -41,7 +41,7 @@ commands:
               npm run migrations:revert
             fi
             
-              exit 1
+              
             
             
 jobs:
@@ -58,7 +58,7 @@ jobs:
             cd backend 
             npm install 
             npm run build
-            exit 1
+            
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
@@ -76,7 +76,7 @@ jobs:
             cd frontend 
             npm install 
             npm run build 
-             exit 1
+             
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
@@ -162,7 +162,7 @@ jobs:
               --tags project=udatawfiq-backend \
                --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
                --parameter-overrides ID="your workflow id"  
-              exit 1
+              
       - run:
           name: Ensure front-end infrastructure exist
           command: |
@@ -171,7 +171,7 @@ jobs:
               --tags project=udatawfiq-frontend \
                --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
                --parameter-overrides ID="your workflow id"  
-              exit 1
+              
       - run:
           name: Add back-end ip to ansible inventory
           command: |
@@ -182,7 +182,7 @@ jobs:
             echo $BACKEND_IP >> .circleci/ansible/inventory.txt  
             echo http://${BACKEND_IP}:3030 > backend-url.txt 
             cat backend-url.txt
-            exit 1
+            
       - persist_to_workspace:
           root: ~/
           paths:
@@ -221,13 +221,13 @@ jobs:
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}    
 
-            exit 1
+            
       - run:
           name: Configure server
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
-            exit 1
+            
       # Here's where you will add some code to rollback on failure      
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
