@@ -219,14 +219,7 @@ jobs:
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml 
       - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}    
-
-            
-      - run:
-          name: Configure server
-          command: |
-            cd .circleci/ansible
-            ansible-playbook -i inventory.txt configure-server.yml
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}          
             
       # Here's where you will add some code to rollback on failure      
       - destroy-environment:
@@ -266,6 +259,8 @@ jobs:
             fi 
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+  
+  
   deploy-frontend:
     docker: 
       - image: circleci/node:13.8.0
@@ -309,7 +304,7 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7} 
   deploy-backend:
     docker:
-      - image : python:3.7-alpine3.11
+      - image : python:3.7-alpine3.16
     steps:
       # Checkout code from git
       # Add ssh keys with fingerprint
@@ -349,7 +344,7 @@ jobs:
       
   smoke-test:
     docker:
-      - image : python:3.7-alpine3.11 
+      - image : python:3.7-alpine3.16
     steps:
       - checkout
       - attach_workspace:
