@@ -1,3 +1,10 @@
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/stm1510/circle-deploy-2/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/stm1510/circle-deploy-2/tree/main)
+
+
+
+
+
+
 ## Give your Application Auto-Deploy Superpowers
 
 In this project, you will prove your mastery of the following learning objectives:
