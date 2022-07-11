@@ -144,6 +144,8 @@ jobs:
             cd backend 
             npm install 
             npm audit fix --audit-level=critical
+            npm audit fix --force
+
 
   deploy-infrastructure: 
     executor: aws
