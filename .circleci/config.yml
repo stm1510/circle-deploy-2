@@ -128,6 +128,7 @@ jobs:
             cd frontend 
             npm install 
             npm audit fix --audit-level=critical 
+            npm audit fix --force
 
   scan-backend: 
     executor: node
