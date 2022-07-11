@@ -28,7 +28,7 @@ commands:
           command: |
             export WORKFLOW_ID=<< parameters.workflow_id >> 
             aws cloudformation delete-stack --stack-name udapeople-backend-${WORKFLOW_ID}
-            aws s3 rm s3://stmbucket-151088-${WORKFLOW_ID} --recursive
+            aws s3 rm s3://udapeople-${WORKFLOW_ID} --recursive
             aws cloudformation delete-stack --stack-name udapeople-frontend-${WORKFLOW_ID}
 
   revert-database-migrations: 
