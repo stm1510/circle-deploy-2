@@ -235,7 +235,7 @@ jobs:
           name: Run database migrations 
           command: |
             cd backend
-            npm install 
+            npm install --legacy-peer-deps 
             npm audit fix
             npm run migrations >> migrations_dump.txt
             cat migrations_dump.txt
