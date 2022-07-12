@@ -432,8 +432,8 @@ jobs:
       - run: 
           name: Install dependencies 
           command: |
-            sudo yum -y install tar 
-            sudo yum -y install gzip
+             yum -y install tar 
+             yum -y install gzip
       - attach_workspace:
           at: ~/
       - run: 
