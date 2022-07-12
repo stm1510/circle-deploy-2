@@ -239,6 +239,11 @@ jobs:
             npm audit fix
             npm run migrations >> migrations_dump.txt
             cat migrations_dump.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/backend
+            
       # Send migration status to third-party key-value store 
       - run: 
           name: Send migration status to kvdb.io 
