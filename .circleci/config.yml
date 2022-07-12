@@ -236,6 +236,7 @@ jobs:
           command: |
             cd backend
             npm install 
+            npm audit fix
             npm run migrations >> migrations_dump.txt
             cat migrations_dump.txt
       # Send migration status to third-party key-value store 
