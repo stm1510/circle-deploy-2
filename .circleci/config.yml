@@ -129,7 +129,7 @@ jobs:
             cd frontend 
             npm install 
             npm audit fix --audit-level=critical 
-            npm audit fix --force
+            
 
   scan-backend: 
     executor: node
@@ -236,13 +236,10 @@ jobs:
           command: |
             cd backend
             npm install --legacy-peer-deps 
-            npm audit fix
+            npm run build
             npm run migrations >> migrations_dump.txt
             cat migrations_dump.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/backend
+      
             
       # Send migration status to third-party key-value store 
       - run: 
