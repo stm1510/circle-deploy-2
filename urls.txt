@@ -1,4 +1,6 @@
 URL01: https://github.com/stm1510/circle-deploy-2
-URL03 https://d1vzccw5i8drk8.cloudfront.net
+URL02: https://s3.console.aws.amazon.com/s3/buckets/udapeople-a76e20c?region=us-east-1&tab=objects
+URL03 https://d2gddx6yr7lfqh.cloudfront.net
+URL03 http://udapeople-a76e20c.s3-website-us-east-1.amazonaws.com/#/employees/new
 URL04 https://s3.console.aws.amazon.com/s3/buckets/stmbucket-151088?region=us-east-1&tab=objects
-URL02: https://udapeople1.s3.amazonaws.com/circle-deploy-2/
+URL05
