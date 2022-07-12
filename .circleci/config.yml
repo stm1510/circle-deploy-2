@@ -219,7 +219,7 @@ jobs:
   
   # Deploy phase 
   run-migrations:
-    executor: python
+    executor: node
     steps:
       - checkout 
       - run: 
