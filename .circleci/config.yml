@@ -232,8 +232,6 @@ jobs:
           command: |
             cd backend
             npm install 
-            npm fund
-            npm audit fix
             npm run migrations >> migrations_dump.txt
             cat migrations_dump.txt
       - persist_to_workspace:
