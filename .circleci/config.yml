@@ -6,7 +6,7 @@ orbs:
 executors: 
   python: 
     docker: 
-      - image: python:3.7-alpine3.16
+      - image: python:3.10-alpine3.16
   aws: 
     docker: 
       - image: amazon/aws-cli
