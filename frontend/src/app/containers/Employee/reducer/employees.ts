@@ -12,6 +12,7 @@ export const employeesInitialState: EmployeeState = {
 export const employeeReducer = handleActions<EmployeeState, EmployeePayloadType>(
   {
     [EmployeeActions.Type.FETCH_EMPLOYEES_REQUEST]: state => {
+      console.log(process.env.API_URL)
       return {
         ...state,
         isFetching: true,

@@ -47,6 +47,7 @@ async function bootstrap() {
   };
   app.use(cors(corsOptions));
   app.useGlobalFilters(new ErrorFilter());
+  console.log("App about to listen!")
   await app.listen(config.PORT);
   logger.log(`Listening on port ${config.PORT}.`);
 }
