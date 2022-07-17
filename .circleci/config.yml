@@ -205,34 +205,41 @@ jobs:
             - project/backend
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+  
   run-migrations:
-    docker:
-      - image: python:3.7-alpine3.16 # safest to use to avoid migration errors
+    docker :
+      - image : python:3.10-alpine3.16
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/.circleci/ansible/inventory.txt
       - run:
           name: Install dependencies
           command: |
-            apk add --update curl openssh nodejs npm
-            pip install awscli
-            npm --version
-            aws --version
+            apk add --update --no-cache tar gzip nodejs npm aws-cli curl
       - restore_cache:
-          keys: [backend-build]
-      - attach_workspace:
-          at: ~/
+          keys: ['backend-build']
       - run:
           name: Run migrations
           command: |
             cd backend
-            npm run migrations > migrations.txt
+            npm install
+            npm run build
+            npm run migrations >> migrations_dump.txt
+            ls -al
+            cat migrations_dump.txt
       - run:
-          name: Send migration results to kvdb
+          name: Send migration results to kvdb.io
           command: |
-            if grep -q "success" ~/project/backend/migrations.txt
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-              curl --insecure https://kvdb.io/3arjNaZ692MzYrrQgXh7S3/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
+              curl https://kvdb.io/sNgEqpA1NSViGZCLbMAKP/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1' 
             fi
+      - destroy-environment:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations:
+          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+                
       - destroy-environment:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
   deploy-frontend:
