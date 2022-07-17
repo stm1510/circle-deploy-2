@@ -36,7 +36,7 @@ Resources:
       InstanceType: t2.micro
       SecurityGroups:
         - Ref: InstanceSecurityGroup
-      KeyName: udacity-ansible
+      KeyName: udacity-projecttawfiq
       ImageId: ami-09d56f8956ab235b3
       Tags:
         - Key: Name
