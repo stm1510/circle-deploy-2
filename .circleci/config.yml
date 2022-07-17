@@ -327,8 +327,7 @@ jobs:
       # Install dependencies 
       - run: 
           name: Install necessary dependencies 
-          command: |
-            
+          command: |           
             apk add --update --no-cache tar gzip nodejs npm aws-cli ansible
       - restore_cache:
           keys: ['backend-build']
@@ -337,16 +336,19 @@ jobs:
       - run:
           name: Deploy backend
           command: |
-            cd backend
-            npm install
-            npm run build
-            cd ..
-            tar -C backend -czvf artifact.tar.gz .
+            cd backend 
+            npm i 
+            npm run build 
+            cd .. 
+            tar -C backend -czvf artifact.tar.gz . 
+            tree -afC /root/project/.circleci -I *node_modules*
             mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
             mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
             cd .circleci/ansible
-            echo "Contents of the inventory.txt file is ------$(cat inventory.txt)"
+            echo "Verifying contents of the inventory.txt file...$(tail -1 inventory.txt)"
+            cat inventory.txt 
             ansible-playbook -i inventory.txt deploy-backend.yml
+
 #      - attach_workspace:
 #          at: ~/ 
       # Set environment variables 
