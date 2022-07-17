@@ -234,18 +234,16 @@ jobs:
   
   # Deploy phase 
   run-migrations:
-    docker:
-      - image:  circleci/node:13.8.0  
+    executor: python 
     steps:
       - checkout 
+      - attach_workspace:
+          at: ~/.circleci/ansible/inventory.txt
           
       - run: 
           name: Install dependencies 
           command: |
-            sudo apt install -y tar gzip curl
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip -qq awscliv2.zip
-            sudo ./aws/install
+            apk add --update --no-cache tar gzip nodejs npm aws-cli curl
       - restore_cache:
           keys: ['backend-build']
       - attach_workspace:
@@ -254,10 +252,11 @@ jobs:
           name: Run database migrations 
           command: |
             cd backend
-            npm run migrations >> migrations.txt 
-           
-            
+            npm install --legacy-peer-deps 
+            npm run build
+            npm run migrations >> migrations_dump.txt
             cat migrations_dump.txt
+      
       
             
       # Send migration status to third-party key-value store 
