@@ -211,7 +211,7 @@ jobs:
       - run: 
           name: Configure server
           command: | 
-            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION >> backend/.env
+            echo TYPEORM_CONNECTION=$TYPEORM_CONNECTION > backend/.env
             echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> backend/.env
             echo TYPEORM_ENTITIES=$TYPEORM_ENTITIES >> backend/.env
             echo TYPEORM_MIGRATIONS=$TYPEORM_MIGRATIONS >> backend/.env
@@ -243,6 +243,8 @@ jobs:
             apk add --update --no-cache tar gzip nodejs npm aws-cli curl
       - restore_cache:
           keys: ['backend-build']
+      - attach_workspace:
+          at: ~/
       - run:
           name: Run database migrations 
           command: |
@@ -318,6 +320,8 @@ jobs:
             apk add --update tar gzip ansible nodejs npm curl rsync openssh
             pip install awscli 
             ansible --version 
+      - attach_workspace:
+          at: ~/ 
       # Set environment variables 
       - run: 
           name: Set environment variables 
