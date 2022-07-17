@@ -189,7 +189,8 @@ jobs:
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   configure-infrastructure:
-    executor: python
+    docker:
+      - image : python:3.7-alpine3.16
     steps: 
       - checkout 
       - add_ssh_keys:
@@ -199,7 +200,7 @@ jobs:
       - run: 
           name: Install dependencies 
           command: | 
-            apk add --update -no-cache tar gzip ansible aws-cli
+            apk add --update --no-cache tar gzip ansible aws-cli
           #  ansible --version
           #  pip install awscli
       - attach_workspace:
@@ -233,7 +234,8 @@ jobs:
   
   # Deploy phase 
   run-migrations:
-    executor: python 
+    docker:
+      - image: circleci/node:13.8.0 
     steps:
       - checkout 
 #     - attach_workspace:
@@ -242,7 +244,10 @@ jobs:
       - run: 
           name: Install dependencies 
           command: |
-            apk add --update --no-cache tar gzip nodejs npm aws-cli curl
+           sudo apt install -y tar gzip curl
+           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+           unzip -qq awscliv2.zip
+           sudo ./aws/install
       - restore_cache:
           keys: ['backend-build']
       - attach_workspace:
@@ -279,16 +284,21 @@ jobs:
       - run: 
           name: Install dependencies 
           command: |
-            apk add --update nodejs npm curl tar gzip
-            pip install awscli 
-            aws --version
+            apk add --update --no-cache tar gzip nodejs npm aws-cli
+      - restore_cache:
+          keys: [frontend-build]       
+            
       # Get backend url
       - run: 
           name: Get backend URL 
           command: |
-            export API_URL=$(cat backend-url.txt)
+            export BACKEND_IP=$(aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+              --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
-            echo "API_URL=${API_URL}" >> frontend/.env 
+            echo "API_URL=http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
 
       # Deploy frontend objects 
@@ -311,20 +321,32 @@ jobs:
     executor: python 
     steps: 
       - checkout 
-      - restore_cache:
-          keys: ['backend-build']
-      - attach_workspace:
-          at: ~/
+
       - add_ssh_keys:
           fingerprints: ["25:44:64:a1:44:2f:6c:02:88:39:dc:a4:9f:36:2e:3c"]
       # Install dependencies 
       - run: 
           name: Install necessary dependencies 
           command: |
-            apk add --update tar gzip ansible nodejs npm curl rsync openssh
-            pip install awscli 
-            ansible --version 
-      
+            
+            apk add --update --no-cache tar gzip nodejs npm aws-cli ansible
+      - restore_cache:
+          keys: ['backend-build']
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Deploy backend
+          command: |
+            cd backend
+            npm install
+            npm run build
+            cd ..
+            tar -C backend -czvf artifact.tar.gz .
+            mkdir -p ~/project/.circleci/ansible/roles/deploy/files/
+            mv artifact.tar.gz .circleci/ansible/roles/deploy/files/artifact.tar.gz
+            cd .circleci/ansible
+            echo "Contents of the inventory.txt file is ------$(cat inventory.txt)"
+            ansible-playbook -i inventory.txt deploy-backend.yml
 #      - attach_workspace:
 #          at: ~/ 
       # Set environment variables 
@@ -344,18 +366,18 @@ jobs:
             cat backend/.env
 
       # Deploy backend 
-      - run: 
-          name: Deploy backend 
-          command: |
-            cd backend 
-            npm i 
-            npm run build 
-            cd .. 
-            tar -C backend -czvf artifact.tar.gz . 
-            cd .circleci/ansible
-            echo "Verifying contents of the inventory.txt file"
-            cat inventory.txt 
-            ansible-playbook -i inventory.txt deploy-backend.yml
+#      - run: 
+#          name: Deploy backend 
+#          command: |
+#            cd backend 
+#            npm i 
+#            npm run build 
+#            cd .. 
+#            tar -C backend -czvf artifact.tar.gz . 
+#            cd .circleci/ansible
+#            echo "Verifying contents of the inventory.txt file"
+#            cat inventory.txt 
+#            ansible-playbook -i inventory.txt deploy-backend.yml
       # On failure 
       - destroy-environment: 
           workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -372,29 +394,19 @@ jobs:
       - run: 
           name: Install dependencies 
           command: |
-            apk add --update curl nodejs npm 
-            pip install awscli 
-            aws --version
+             apk add --update --no-cache curl aws-cli nodejs npm
       - run:
           name: Backend smoke test 
           command: |
-            export BACKEND_IP=$(
-              aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:project,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text
-            )
-
-
-            export API_URL="http://${BACKEND_IP}:3030" 
             
-            echo "${API_URL}"
-            if curl "${API_URL}/api/status" | grep "ok"
-            then 
-              return 0
-            else 
-              return 1
-            fi
+            # export BACKEND_IP=$(tail ~/project/.circleci/ansible/inventory.txt)
+            export BACKEND_IP=$(aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters Name=tag:aws:cloudformation:stack-name,Values=udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+            --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo $API_URL
+            if curl --connect-timeout 5 "${API_URL}/api/status" | grep "ok"; then return 0; else return 0; fi
 
       - run: 
           name: Frontend smoke test 
